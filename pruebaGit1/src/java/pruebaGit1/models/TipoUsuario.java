@@ -11,6 +11,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -37,11 +39,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class TipoUsuario implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_tipo_usuario")
     private Integer idTipoUsuario;
-    @Size(max = 100)
+    @Size(min=1, max = 100, message="Debe ingresar el Nombre")
     @Column(name = "nombre")
     private String nombre;
     @Column(name = "created")
@@ -112,7 +115,7 @@ public class TipoUsuario implements Serializable {
 
     @Override
     public String toString() {
-        return nombre;
+        return nombre + "(" + idTipoUsuario + ")";
     }
     
 }

@@ -11,7 +11,11 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -36,37 +40,48 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Usuario.findByCreated", query = "SELECT u FROM Usuario u WHERE u.created = :created"),
     @NamedQuery(name = "Usuario.findByUpdated", query = "SELECT u FROM Usuario u WHERE u.updated = :updated"),
     @NamedQuery(name = "Usuario.findByLogin", query = "SELECT u FROM Usuario u WHERE u.login = :login"),
+    @NamedQuery(name = "Usuario.findLogin", query = "SELECT u FROM Usuario u WHERE u.login = :login AND u.password = :password"),
     @NamedQuery(name = "Usuario.findByPassword", query = "SELECT u FROM Usuario u WHERE u.password = :password"),
     @NamedQuery(name = "Usuario.findByEmail", query = "SELECT u FROM Usuario u WHERE u.email = :email"),
-    @NamedQuery(name = "Usuario.findByTipoUsuarioDi", query = "SELECT u FROM Usuario u WHERE u.tipoUsuarioDi = :tipoUsuarioDi")})
+    @NamedQuery(name = "Usuario.findByTipoUsuarioId", query = "SELECT u FROM Usuario u WHERE u.tipoUsuarioId = :tipoUsuarioId")})
 public class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_usuario")
     private Integer idUsuario;
-    @Size(max = 100)
+    
+    @Size(min = 1, max = 100, message="Debe ingresar el Nombre")
     @Column(name = "nombre")
     private String nombre;
+    
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
+    
     @Column(name = "updated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    @Size(max = 100)
+    
+    @Size(min = 1, max = 100, message="Debe ingresar el login")
     @Column(name = "login")
     private String login;
-    @Size(max = 100)
+    
+    @Size(min = 1, max = 100, message="Debe ingresar el password")
     @Column(name = "password")
     private String password;
+    
     @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
-    @Size(max = 100)
+    @Size(min = 1, max = 100, message="Debe ingresar el mail")
     @Column(name = "email")
     private String email;
-    @Column(name = "tipo_usuario_di")
-    private Integer tipoUsuarioDi;
+    
+    @NotNull(message="Debe seleccionar un Tipo de Usuario")
+    @JoinColumn(name = "tipo_usuario_id", referencedColumnName =  "id_tipo_usuario")
+    @ManyToOne
+    private TipoUsuario tipoUsuarioId;
 
     public Usuario() {
     }
@@ -131,12 +146,12 @@ public class Usuario implements Serializable {
         this.email = email;
     }
 
-    public Integer getTipoUsuarioDi() {
-        return tipoUsuarioDi;
+    public TipoUsuario getTipoUsuarioId() {
+        return tipoUsuarioId;
     }
 
-    public void setTipoUsuarioDi(Integer tipoUsuarioDi) {
-        this.tipoUsuarioDi = tipoUsuarioDi;
+    public void setTipoUsuarioId(TipoUsuario tipoUsuarioId) {
+        this.tipoUsuarioId = tipoUsuarioId;
     }
 
     @Override
@@ -161,7 +176,7 @@ public class Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return nombre;
+        return nombre + "(" + idUsuario + ")";
     }
     
 }

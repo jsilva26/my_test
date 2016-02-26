@@ -9,6 +9,7 @@ package pruebaGit1.dao;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import pruebaGit1.models.Usuario;
 
 /**
@@ -30,4 +31,14 @@ public class UsuarioDAO extends AbstractDAO<Usuario> {
     }
    
     //Este es el lugar para escribir método de login
+    public Usuario getLogin(String login, String password){
+        try{
+            Query query = em.createNamedQuery("Usuario.findLogin");
+            query.setParameter("login", login);
+            query.setParameter("password", password);
+            return (Usuario)query.getSingleResult();
+        }catch(Exception e){
+            return null;
+        }
+    }
 }

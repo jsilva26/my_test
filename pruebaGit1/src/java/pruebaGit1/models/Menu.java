@@ -11,6 +11,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Menu.findAll", query = "SELECT m FROM Menu m"),
+    @NamedQuery(name = "Menu.findAllOrdenMenu", query = "SELECT m FROM Menu m order by m.raiz, m.orden"),
     @NamedQuery(name = "Menu.findByIdMenu", query = "SELECT m FROM Menu m WHERE m.idMenu = :idMenu"),
     @NamedQuery(name = "Menu.findByNombre", query = "SELECT m FROM Menu m WHERE m.nombre = :nombre"),
     @NamedQuery(name = "Menu.findByImagen", query = "SELECT m FROM Menu m WHERE m.imagen = :imagen"),
@@ -42,13 +45,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Menu implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_menu")
     private Integer idMenu;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 100, message="Debe ingresar el nombre")
     @Column(name = "nombre")
     private String nombre;
     @Size(max = 100)
@@ -61,8 +65,10 @@ public class Menu implements Serializable {
     @Column(name = "action")
     private String action;
     @Column(name = "raiz")
+    @NotNull(message="Debe ingresar la raíz")
     private Integer raiz;
     @Column(name = "orden")
+    @NotNull (message = "Debe ingresar el orden")
     private Integer orden;
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
@@ -177,7 +183,7 @@ public class Menu implements Serializable {
 
     @Override
     public String toString() {
-        return "pruebaGit1.models.Menu[ idMenu=" + idMenu + " ]";
+        return nombre + "( " + idMenu + " )";
     }
     
 }

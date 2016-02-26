@@ -11,7 +11,11 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -31,23 +35,33 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "MenuTipoUsuario.findAll", query = "SELECT m FROM MenuTipoUsuario m"),
     @NamedQuery(name = "MenuTipoUsuario.findByIdMenuTipoUsuario", query = "SELECT m FROM MenuTipoUsuario m WHERE m.idMenuTipoUsuario = :idMenuTipoUsuario"),
     @NamedQuery(name = "MenuTipoUsuario.findByMenuId", query = "SELECT m FROM MenuTipoUsuario m WHERE m.menuId = :menuId"),
-    @NamedQuery(name = "MenuTipoUsuario.findByTipoUsuario", query = "SELECT m FROM MenuTipoUsuario m WHERE m.tipoUsuario = :tipoUsuario"),
+    @NamedQuery(name = "MenuTipoUsuario.findByTipoUsuarioId", query = "SELECT m FROM MenuTipoUsuario m WHERE m.tipoUsuarioId = :tipoUsuarioId"),
     @NamedQuery(name = "MenuTipoUsuario.findByCreated", query = "SELECT m FROM MenuTipoUsuario m WHERE m.created = :created"),
     @NamedQuery(name = "MenuTipoUsuario.findByUpdated", query = "SELECT m FROM MenuTipoUsuario m WHERE m.updated = :updated")})
 public class MenuTipoUsuario implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_menu_tipo_usuario")
     private Integer idMenuTipoUsuario;
-    @Column(name = "menu_id")
-    private Integer menuId;
-    @Column(name = "tipo_usuario")
-    private Integer tipoUsuario;
+    
+    @NotNull(message = "Debe seleccionar un Menu")
+    @JoinColumn(name = "menu_id", referencedColumnName = "id_menu")
+    @ManyToOne
+    private Menu menuId;
+    
+    @NotNull(message = "Debe seleccionar un Tipo Usuario")
+    @JoinColumn(name = "tipo_usuario_id", referencedColumnName = "id_tipo_usuario")
+    @ManyToOne
+    @Column(name = "tipo_usuario_id")
+    private TipoUsuario tipoUsuarioId;
+    
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
+    
     @Column(name = "updated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
@@ -67,20 +81,20 @@ public class MenuTipoUsuario implements Serializable {
         this.idMenuTipoUsuario = idMenuTipoUsuario;
     }
 
-    public Integer getMenuId() {
+    public Menu getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Integer menuId) {
+    public void setMenuId(Menu menuId) {
         this.menuId = menuId;
     }
 
-    public Integer getTipoUsuario() {
-        return tipoUsuario;
+    public TipoUsuario getTipoUsuario() {
+        return tipoUsuarioId;
     }
 
-    public void setTipoUsuario(Integer tipoUsuario) {
-        this.tipoUsuario = tipoUsuario;
+    public void setTipoUsuario(TipoUsuario tipoUsuarioId) {
+        this.tipoUsuarioId = tipoUsuarioId;
     }
 
     public Date getCreated() {
@@ -121,7 +135,7 @@ public class MenuTipoUsuario implements Serializable {
 
     @Override
     public String toString() {
-        return "pruebaGit1.models.MenuTipoUsuario[ idMenuTipoUsuario=" + idMenuTipoUsuario + " ]";
+        return tipoUsuarioId.getNombre() + " - " + menuId.getNombre();
     }
     
 }
